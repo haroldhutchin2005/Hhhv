@@ -55,7 +55,7 @@ module.exports.run = async function ({ api, event, args }) {
 
         if (responseData.startsWith("Song reuploaded")) {
             const songID = responseData.match(/Song reuploaded: (\d+)/)[1];
-            const message = `✅ | 𝖱𝖾-𝗎𝗉𝗅𝗈𝖺𝖽𝖾𝖽 𝖬𝗎𝗌𝗂𝖼 𝖦𝖣𝖧\n\n𝖨𝖣: ${songID}\n𝖭𝖺𝗆𝖾: ${title}`;
+            const message = `✅ | 𝖱𝖾-𝗎𝗉𝗅𝗈𝖺𝖽𝖾𝖽 𝖬𝗎𝗌𝗂𝖼 𝖦𝖣𝖯𝖧\n\n𝖨𝖣: ${songID}\n𝖭𝖺𝗆𝖾: ${title}`;
 
             api.editMessage(message, waitMessage.messageID, threadID);
         } else if (responseData.includes("This URL doesn't point to a valid audio file.") || responseData.includes("This song already exists in our database.")) {
