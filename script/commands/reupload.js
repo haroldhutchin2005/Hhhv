@@ -1,0 +1,72 @@
+const axios = require('axios');
+
+module.exports.config = {
+    name: "addsong",
+    version: "1.1.1",
+    hasPermssion: 0,
+    credits: "Jonell Magallanes",
+    description: "Reupload music from GDPH",
+    usePrefix: false,
+    commandCategory: "GDPH",
+    usages: "songlink | title",
+    cooldowns: 10
+};
+
+module.exports.run = async function ({ api, event, args }) {
+    const { body, threadID, messageID } = event;
+    let link, title;
+
+    if (event.type === "message_reply" && event.messageReply.attachments.length > 0) {
+        link = event.messageReply.attachments[0].url;
+        title = args.join(" ").trim();
+    } else {
+        [link, title] = args.join(" ").split("|").map(arg => arg.trim());
+    }
+
+    const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/;
+
+    if (!link) {
+        return api.sendMessage("𝖯𝗅𝖾𝖺𝗌𝖾 𝗉𝗋𝗈𝗏𝗂𝖽𝖾 𝗌𝗈𝗇𝗀 𝗅𝗂𝗇𝗄 𝖺𝗇𝖽 𝗍𝗂𝗍𝗅𝖾.\n\n𝖴𝗌𝖺𝗀𝖾: addsong 𝖽𝗋𝗈𝗃𝖻𝗈𝗑𝗅𝗂𝗇𝗄 | 𝗍𝗂𝗍𝗅𝖾 or reply to a message with an attachment", threadID, messageID);
+    }
+
+    const waitMessage = await api.sendMessage("Reuploading song. Please wait...", threadID);
+
+    try {
+        let uploadData;
+
+        if (youtubeRegex.test(link)) {
+            const axiosUrl = `https://reuploadgdph-0816871a3a93.herokuapp.com/api/upload?link=${encodeURIComponent(link)}`;
+            const uploadResponse = await axios.get(axiosUrl);
+            uploadData = uploadResponse.data;
+
+            if (!uploadData.src) {
+                return api.editMessage("Failed to get src from the API.", waitMessage.messageID, threadID);
+            }
+
+            title = uploadData.src;
+            link = `https://reuploadgdph-0816871a3a93.herokuapp.com/files?src=${encodeURIComponent(title)}`;
+        }
+
+        const apiUrl = `https://reupload-gdph-music-api-by-jonell.onrender.com/gdph?songlink=${encodeURIComponent(link)}&title=${encodeURIComponent(title)}&artist=GDPHBOT`;
+
+        const response = await axios.get(apiUrl);
+        let responseData = response.data;
+
+        // Remove HTML tags from response
+        responseData = responseData.replace(/<\/?b>/g, "").replace(/<hr>/g, "");
+
+        if (responseData.startsWith("Song reuploaded")) {
+            const songID = responseData.match(/Song reuploaded: (\d+)/)[1];
+            const message = `✅ | 𝖱𝖾-𝗎𝗉𝗅𝗈𝖺𝖽𝖾𝖽 𝖬𝗎𝗌𝗂𝖼 𝖦𝖣𝖧\n\n𝖨𝖣: ${songID}\n𝖭𝖺𝗆𝖾: ${title}`;
+
+            api.editMessage(message, waitMessage.messageID, threadID);
+        } else if (responseData.includes("This URL doesn't point to a valid audio file.") || responseData.includes("This song already exists in our database.")) {
+            api.editMessage(responseData, waitMessage.messageID, threadID);
+        } else {
+            api.editMessage("An error occurred while processing your request.", waitMessage.messageID, threadID);
+        }
+    } catch (error) {
+        console.error(error);
+        api.editMessage("An error occurred while processing your request.", waitMessage.messageID, threadID);
+    }
+};
