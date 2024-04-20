@@ -50,11 +50,11 @@ module.exports.run = async function ({ api, event }) {
     }
 
     if (Object.values(status).every(stat => stat === '✅')) {
-        response += "\n𝖠𝗅𝗅 𝗌𝖾𝗋𝗏𝖾𝗋𝗌 𝖺𝗋𝖾 𝗎𝗉.";
+        response += "\n𝖠𝗅𝗅 𝖲𝖾𝗋𝗏𝖾𝗋 𝖺𝗋𝖾 𝗎𝗉.";
     } else if (Object.values(status).every(stat => stat === '❌')) {
-        response += "\n𝖠𝗅𝗅 𝗌𝖾𝗋𝖽𝖾𝗋𝗌 𝖺𝗋𝖾 𝖽𝗈𝗐𝗇.";
+        response += "\n𝖠𝗅𝗅 𝖲𝖾𝗋𝗏𝖾𝗋 𝖺𝗋𝖾 𝖽𝗈𝗐𝗇.";
     } else {
-        response += "\n𝖲𝗈𝗆𝖾 𝗌𝖾𝗋𝖺𝖾𝗋𝗌 𝗆𝖺𝗒 𝖻𝖾 𝖾𝗑𝗉𝖾𝗋𝗂𝖾𝗇𝖼𝗂𝗇𝗀 𝗂𝗌𝗌𝗎𝖾𝗌.";
+        response += "\n𝖲𝗈𝗆𝖾 𝖲𝖾𝗋𝗏𝖾𝗋 𝗆𝖺𝗒 𝖻𝖾 𝖾𝗑𝗉𝖾𝗋𝗂𝖾𝗇𝖼𝗂𝗇𝗀 𝗂𝗌𝗌𝗎𝖾𝗌.";
     }
 
     api.editMessage(response, checkingMessage.messageID, event.threadID, event.messageID);
