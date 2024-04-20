@@ -60,7 +60,7 @@ module.exports.run = async ({ api, event }) => {
       const tinyUrlResponse = await axios.get(`https://jonellccapisprojectv2-a62001f39859.herokuapp.com/api/tinyurl?url=${videoUrl}`);
       const shortenedUrl = tinyUrlResponse.data.shortenedUrl;
 
-      const messageBody = `𝖧𝖾𝗋𝖾'𝗌 𝗒𝗈𝗎𝗋 𝗆𝗎𝗌𝗂𝖼, 𝖾𝗇𝗃𝗈𝗒!\n𝖠𝗋𝗍𝗂𝗌𝗍: ${video.author.name}\n𝖸𝗈𝗎𝗍𝗎𝖻𝖾 𝖫𝗂𝗇𝗄: ${shortenedUrl}`;
+      const messageBody = `𝖧𝖾𝗋𝖾'𝗌 𝗒𝗈𝗎𝗋 𝗆𝗎𝗌𝗂𝖼, 𝖾𝗇𝗃𝗈𝗒!\n𝖠𝗋𝗍𝗂𝗌𝗍: ${video.author.name}\n𝖸𝗈𝗎𝗍𝗎𝖻𝖾 𝖫𝗂𝗇𝗄: ${videoUrl}`;
 
       const message = {
         body: messageBody,
