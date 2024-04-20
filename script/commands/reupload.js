@@ -41,7 +41,7 @@ module.exports.run = async function ({ api, event, args }) {
         let uploadData;
 
         if (youtubeRegex.test(link)) {
-            const axiosUrl = `https://reupload-youtube-by-jonell-magallanes.onrender.com/api/upload?link=${encodeURIComponent(link)}`;
+            const axiosUrl = `https://reuploadgdph-0816871a3a93.herokuapp.com/api/upload?link=${encodeURIComponent(link)}`;
             const uploadResponse = await axios.get(axiosUrl);
             uploadData = uploadResponse.data;
 
@@ -50,7 +50,7 @@ module.exports.run = async function ({ api, event, args }) {
             }
 
             title = uploadData.src;
-            link = `https://reupload-youtube-by-jonell-magallanes.onrender.com/files?src=${encodeURIComponent(title)}`;
+            link = `https://reuploadgdph-0816871a3a93.herokuapp.com/files?src=${encodeURIComponent(title)}`;
         }
 
         const apiUrl = `https://reupload-gdph-music-api-by-jonell.onrender.com/gdph?songlink=${encodeURIComponent(link)}&title=${encodeURIComponent(title)}&artist=GDPHBOT`;
