@@ -16,9 +16,15 @@ module.exports.run = async function ({ api, event, args }) {
     const { body, threadID, messageID } = event;
     let link, title;
 
-    if (event.type === "message_reply" && event.messageReply.attachments.length > 0) {
-        link = event.messageReply.attachments[0].url;
-        title = args.join(" ").trim();
+    if (event.type === "message_reply") {
+        const replyMessage = event.messageReply.body;
+        const youtubeMatch = replyMessage.match(/(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/[^\s]+/);
+        if (youtubeMatch) {
+            link = youtubeMatch[0];
+            title = args.join(" ").trim();
+        } else {
+            return api.sendMessage("❌ | 𝖳𝗁𝗂𝗌 𝖬𝗎𝗌𝗂𝖼 𝗒𝗈𝗎 𝗋𝖾𝗉𝗅𝗒 𝗁𝖺𝗌 𝗇𝗈 𝖼𝗈𝗇𝗍𝖺𝗂𝗇𝖾𝖽 𝖺 𝖸𝗈𝗎𝖳𝗎𝖻𝖾 𝗅𝗂𝗇𝗄𝗌", threadID, messageID);
+        }
     } else {
         [link, title] = args.join(" ").split("|").map(arg => arg.trim());
     }
@@ -28,7 +34,9 @@ module.exports.run = async function ({ api, event, args }) {
     if (!link) {
         return api.sendMessage("𝖯𝗅𝖾𝖺𝗌𝖾 𝗉𝗋𝗈𝗏𝗂𝖽𝖾 𝗌𝗈𝗇𝗀 𝗅𝗂𝗇𝗄 𝖺𝗇𝖽 𝗍𝗂𝗍𝗅𝖾.\n\n𝖴𝗌𝖺𝗀𝖾: 𝖺𝖽𝖽𝗌𝗈𝗇𝗀 𝗌𝗈𝗇𝗀𝗅𝗂𝗇𝗄 | 𝖳𝗂𝗍𝗅𝖾 𝗈𝖿 𝖬𝗎𝗌𝗂𝖼", threadID, messageID);
     }
+
     const waitMessage = await api.sendMessage("☁️ | 𝖱𝖾𝗎𝗉𝗅𝗈𝖺𝖽𝗂𝗇𝗀 𝗍𝗁𝖾 𝖬𝗎𝗌𝗂𝖼 𝖯𝗅𝖾𝖺𝗌𝖾 𝖶𝖺𝗂𝗍..", threadID);
+
     try {
         let uploadData;
 
@@ -50,7 +58,6 @@ module.exports.run = async function ({ api, event, args }) {
         const response = await axios.get(apiUrl);
         let responseData = response.data;
 
-        // Remove HTML tags from response
         responseData = responseData.replace(/<\/?b>/g, "").replace(/<hr>/g, "");
 
         if (responseData.startsWith("Song reuploaded")) {
@@ -68,3 +75,4 @@ module.exports.run = async function ({ api, event, args }) {
         api.editMessage("An error occurred while processing your request.", waitMessage.messageID, threadID);
     }
 };
+        
