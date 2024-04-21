@@ -51,7 +51,7 @@ module.exports.run = async function ({ api, event, Users, Threads }) {
                             id: userID,
                             fromIndex: 0
                         });
-                        let avt = ["https://i.postimg.cc/CKDWnd72/New-Project-4-C31-AC1.png"];
+                        let avt = ["https://i.postimg.cc/hPkQhZQF/images-2024-04-21-T092151-818.jpg"];
                         var avt1 = avt[Math.floor(Math.random() * avt.length)];
 
                         let firstName = nameArray[0].split(" ")[0];
