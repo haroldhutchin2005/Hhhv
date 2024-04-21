@@ -6,7 +6,7 @@ module.exports.config = {
     hasPermssion: 0,
     credits: "Jonell Magallanes",
     description: "Reupload music from GDPH",
-    usePrefix: false,
+    usePrefix: true,
     commandCategory: "GDPH",
     usages: "songlink | title",
     cooldowns: 10
@@ -23,7 +23,7 @@ module.exports.run = async function ({ api, event, args }) {
             link = youtubeMatch[0];
             title = args.join(" ").trim();
         } else {
-            return api.sendMessage("❌ | 𝖳𝗁𝗂𝗌 𝖬𝗎𝗌𝗂𝖼 𝗒𝗈𝗎 𝗋𝖾𝗉𝗅𝗒 𝗁𝖺𝗌 𝗇𝗈 𝖼𝗈𝗇𝗍𝖺𝗂𝗇𝖾𝖽 𝖺 𝖸𝗈𝗎𝖳𝗎𝖻𝖾 𝗅𝗂𝗇𝗄𝗌", threadID, messageID);
+            return api.sendMessage("❌ | 𝖳𝗁𝗂𝗌 𝖬𝗎𝗌𝗂𝖼 𝗒𝗈𝗎 𝗋𝖾𝗉𝗅𝗒 𝗁𝖺𝗌 𝗇𝗈 𝖼𝗈𝗇𝗍𝖺𝗂𝗇𝖾d 𝖺 𝖸𝗈𝗎𝖳𝗎𝖻𝖾 𝗅𝗂𝗇𝗄𝗌", threadID, messageID);
         }
     } else {
         [link, title] = args.join(" ").split("|").map(arg => arg.trim());
@@ -38,31 +38,19 @@ module.exports.run = async function ({ api, event, args }) {
     const waitMessage = await api.sendMessage("☁️ | 𝖱𝖾𝗎𝗉𝗅𝗈𝖺𝖽𝗂𝗇𝗀 𝗍𝗁𝖾 𝖬𝗎𝗌𝗂𝖼 𝖯𝗅𝖾𝖺𝗌𝖾 𝖶𝖺𝗂𝗍..", threadID);
 
     try {
-        let uploadData;
-
-        if (youtubeRegex.test(link)) {
-            const axiosUrl = `https://reuploadgdph-0816871a3a93.herokuapp.com/api/upload?link=${encodeURIComponent(link)}`;
-            const uploadResponse = await axios.get(axiosUrl);
-            uploadData = uploadResponse.data;
-
-            if (!uploadData.src) {
-                return api.editMessage("Failed to get src from the API.", waitMessage.messageID, threadID);
-            }
-
-            title = uploadData.src;
-            link = `https://reuploadgdph-0816871a3a93.herokuapp.com/files?src=${encodeURIComponent(title)}`;
-        }
-
-        const apiUrl = `https://reupload-gdph-music-api-by-jonell.onrender.com/gdph?songlink=${encodeURIComponent(link)}&title=${encodeURIComponent(title)}&artist=GDPHBOT`;
-
+        const apiUrl = `https://reuploadmusicgdpsbyjonellapis-7701ddc59ff1.herokuapp.com/api/jonell?url=${encodeURIComponent(link)}`;
+        
         const response = await axios.get(apiUrl);
-        let responseData = response.data;
+        const { title: songTitle, url: songLink } = response.data.Successfully;
 
-        responseData = responseData.replace(/<\/?b>/g, "").replace(/<hr>/g, "");
+        const reuploadUrl = `https://reupload-gdph-music-api-by-jonell.onrender.com/gdph?songlink=${encodeURIComponent(songLink)}&title=${encodeURIComponent(songTitle)}&artist=GDPHBOT`;
+
+        const reuploadResponse = await axios.get(reuploadUrl);
+        const responseData = reuploadResponse.data.replace(/<\/?b>/g, "").replace(/<hr>/g, "");
 
         if (responseData.startsWith("Song reuploaded")) {
             const songID = responseData.match(/Song reuploaded: (\d+)/)[1];
-            const message = `✅ | 𝖱𝖾-𝗎𝗉𝗅𝗈𝖺𝖽𝖾𝖽 𝖬𝗎𝗌𝗂𝖼 𝖦𝖣𝖯𝖧\n\n𝖨𝖣: ${songID}\n𝖭𝖺𝗆𝖾: ${title}`;
+            const message = `✅ | 𝖱𝖾-𝗎𝗉𝗅𝗈𝖺𝖼𝖽𝖾𝖽 𝖬𝗎𝗌𝗂𝖼 𝖦𝖣𝖯𝖧\n\n𝖨𝖣: ${songID}\n𝖭𝖺𝗆𝖾: ${songTitle}`;
 
             api.editMessage(message, waitMessage.messageID, threadID);
         } else if (responseData.includes("This URL doesn't point to a valid audio file.") || responseData.includes("This song already exists in our database.")) {
@@ -75,4 +63,3 @@ module.exports.run = async function ({ api, event, args }) {
         api.editMessage("An error occurred while processing your request.", waitMessage.messageID, threadID);
     }
 };
-        
