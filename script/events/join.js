@@ -51,7 +51,7 @@ module.exports.run = async function ({ api, event, Users, Threads }) {
                             id: userID,
                             fromIndex: 0
                         });
-                        let avt = ["https://i.postimg.cc/pTGHDKnY/images-2023-08-19-T230758-444.jpg", "https://i.postimg.cc/pd0WBwwF/images-2023-08-19-T230807-555.jpg", "https://i.postimg.cc/gkvG7L9d/images-2023-08-19-T230828-578.jpg", "https://i.postimg.cc/XNfXtYyf/images-2023-08-19-T230845-301.jpg"];
+                        let avt = ["https://i.postimg.cc/CKDWnd72/New-Project-4-C31-AC1.png"];
                         var avt1 = avt[Math.floor(Math.random() * avt.length)];
 
                         let firstName = nameArray[0].split(" ")[0];
