@@ -24,7 +24,7 @@ module.exports.run = async function({ api, event, Users, Threads }) {
     const type = (event.author == event.logMessageData.leftParticipantFbId) ? "left the group." : "kicked by Admin of the group";
     let pathh = __dirname + `/cache/bye.png`;
     let name = (await api.getUserInfo(event.logMessageData.leftParticipantFbId))[event.logMessageData.leftParticipantFbId].name;
-    let avt = ["https://i.postimg.cc/505dTjFz/images-2024-04-21-T092151-818.jpg"];
+    let avt = ["https://i.postimg.cc/RCjpKv65/New-Project-1-B822-F0.png"];
     let avt1 = avt[Math.floor(Math.random() * avt.length)];
     const firstName = name.split(" ")[0]; // Extracting the first name
 
