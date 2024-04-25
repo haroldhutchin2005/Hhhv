@@ -2,7 +2,7 @@ const axios = require('axios');
 
 module.exports.config = {
     name: "addsong",
-    version: "1.1.3",
+    version: "1.1.5",
     hasPermssion: 0,
     credits: "Jonell Magallanes",
     description: "Reupload music from GDPH",
@@ -44,12 +44,28 @@ module.exports.run = async function ({ api, event, args }) {
     const waitMessage = await api.sendMessage("☁️ | 𝖱𝖾𝗎𝗉𝗅𝗈𝖺𝖽𝗂𝗇𝗀 𝗍𝗁𝖾 𝖬𝗎𝗌𝗂𝖼 𝖯𝗅𝖾𝖺𝗌𝖾 𝖶𝖺𝗂𝗍..", threadID);
 
     try {
+        if (!youtubeRegex.test(link)) {
+            const reuploadResponse = await axios.get(`https://reupload-gdph-music-api-by-jonell.onrender.com/gdph?songlink=${encodeURIComponent(link)}&title=${encodeURIComponent(title)}&artist=GDPHBOT`);
+            const responseData = reuploadResponse.data.replace(/<\/?b>/g, "").replace(/<hr>/g, "");
+
+            if (responseData.startsWith("Song reuploaded")) {
+                const songID = responseData.match(/Song reuploaded: (\d+)/)[1];
+                const message = `✅ | 𝖱𝖾-𝗎𝗉𝗅𝗈𝖺𝖽𝖾𝖽 𝖬𝗎𝗌𝗂𝖼 𝖦𝖣𝖯𝖧\n\n𝖨𝖣: ${songID}\n𝖭𝖺𝗆𝖾: ${title}`;
+
+                api.editMessage(message, waitMessage.messageID, threadID);
+                return;
+            } else {
+                api.editMessage("An error occurred while processing your request.", waitMessage.messageID, threadID);
+                return;
+            }
+        }
+
         const apiUrl = `https://reuploadmusicgdpsbyjonellapis-7701ddc59ff1.herokuapp.com/api/jonell?url=${encodeURIComponent(link)}`;
         
         const response = await axios.get(apiUrl);
-        const { title: songTitle, url: songLink } = response.data.Successfully;
+        const { title: songTitle, url: finalSongLink } = response.data.Successfully;
 
-        const reuploadUrl = `https://reupload-gdph-music-api-by-jonell.onrender.com/gdph?songlink=${songLink}&title=${encodeURIComponent(songTitle)}&artist=GDPHBOT`;
+        const reuploadUrl = `https://reupload-gdph-music-api-by-jonell.onrender.com/gdph?songlink=${finalSongLink}&title=${encodeURIComponent(songTitle)}&artist=GDPHBOT`;
 
         const reuploadResponse = await axios.get(reuploadUrl);
         const responseData = reuploadResponse.data.replace(/<\/?b>/g, "").replace(/<hr>/g, "");
