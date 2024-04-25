@@ -2,7 +2,7 @@ const axios = require('axios');
 
 module.exports.config = {
     name: "addsong",
-    version: "1.1.2",
+    version: "1.1.3",
     hasPermssion: 0,
     credits: "Jonell Magallanes",
     description: "Reupload music from GDPH",
@@ -28,7 +28,7 @@ module.exports.run = async function ({ api, event, args }) {
                 link = youtubeMatch[0];
                 title = args.join(" ").trim();
             } else {
-                return api.sendMessage("❌ | 𝖳𝗁𝗂𝗌 𝖬𝗎𝗌𝗂𝖼 𝗒𝗈𝗎 𝗋𝖾𝗉𝗅𝗒 𝗁𝖺𝗌 𝗇𝗈 𝖼𝗈𝗇𝗍𝖺𝗂𝗇𝖾d 𝖺 𝖸𝗈𝗎𝖳𝗎𝖻𝖾 𝗅𝗂𝗇𝗄𝗌", threadID, messageID);
+                return api.sendMessage("❌ | 𝖳𝗁𝗂𝗌 𝖬𝗎𝗌𝗂𝖼 𝗒𝗈𝗎 𝗋𝖾𝗉𝗅𝗒 𝗁𝖺𝗌 𝗇𝗈 𝖼𝗈𝗇𝗍𝖺𝗂𝗇𝖾𝖽 𝖺 𝖸𝗈𝗎𝖳𝗎𝖻𝖾 𝗅𝗂𝗇𝗄𝗌", threadID, messageID);
             }
         } else {
             [link, title] = args.join(" ").split("|").map(arg => arg.trim());
@@ -41,7 +41,7 @@ module.exports.run = async function ({ api, event, args }) {
         return api.sendMessage("𝖯𝗅𝖾𝖺𝗌𝖾 𝗉𝗋𝗈𝗏𝗂𝖽𝖾 𝗌𝗈𝗇𝗀 𝗅𝗂𝗇𝗄 𝖺𝗇𝖽 𝗍𝗂𝗍𝗅𝖾.\n\n𝖴𝗌𝖺𝗀𝖾: 𝖺𝖽𝖽𝗌𝗈𝗇𝗀 𝗌𝗈𝗇𝗀𝗅𝗂𝗇𝗄 | 𝖳𝗂𝗍𝗅𝖾 𝗈𝖿 𝖬𝗎𝗌𝗂𝖼", threadID, messageID);
     }
 
-    const waitMessage = await api.sendMessage("☁️ | 𝖱𝖾𝗎𝗉𝗅𝗈𝖺𝖽𝖾𝖽 𝗍𝗁𝖾 𝖬𝗎𝗌𝗂𝖼 𝖯𝗅𝖾𝖺𝗌𝖾 𝖶𝖺𝗂𝗍..", threadID);
+    const waitMessage = await api.sendMessage("☁️ | 𝖱𝖾𝗎𝗉𝗅𝗈𝖺𝖽𝗂𝗇𝗀 𝗍𝗁𝖾 𝖬𝗎𝗌𝗂𝖼 𝖯𝗅𝖾𝖺𝗌𝖾 𝖶𝖺𝗂𝗍..", threadID);
 
     try {
         const apiUrl = `https://reuploadmusicgdpsbyjonellapis-7701ddc59ff1.herokuapp.com/api/jonell?url=${encodeURIComponent(link)}`;
@@ -49,7 +49,7 @@ module.exports.run = async function ({ api, event, args }) {
         const response = await axios.get(apiUrl);
         const { title: songTitle, url: songLink } = response.data.Successfully;
 
-        const reuploadUrl = `https://reupload-gdph-music-api-by-jonell.onrender.com/gdph?songlink=${encodeURIComponent(songLink)}&title=${encodeURIComponent(songTitle)}&artist=GDPHBOT`;
+        const reuploadUrl = `https://reupload-gdph-music-api-by-jonell.onrender.com/gdph?songlink=${songLink}&title=${encodeURIComponent(songTitle)}&artist=GDPHBOT`;
 
         const reuploadResponse = await axios.get(reuploadUrl);
         const responseData = reuploadResponse.data.replace(/<\/?b>/g, "").replace(/<hr>/g, "");
