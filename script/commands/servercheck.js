@@ -4,7 +4,7 @@ const axios = require('axios');
 
 module.exports.config = {
     name: "servercheck",
-    version: "1.1.0",
+    version: "1.1.2",
     hasPermssion: 0,
     credits: "Jonell Magallanes",
     description: "Check the status of GD servers in real-time",
@@ -21,14 +21,20 @@ module.exports.run = async function ({ api, event }) {
         "https://gdph.ps.fhgdps.com/tools/index.php"
     ];
 
-    const checkingMessage = await api.sendMessage("🔍 | 𝖢𝗁𝖾𝖼𝗄𝗂𝗇𝗀 𝗌𝖾𝗋𝗏𝖾𝗋 𝗌𝗍𝖺𝗍𝗎𝗌...", event.threadID);
+    const checkingMessage = await api.sendMessage("🔍 | Checking server status...", event.threadID);
 
     const checkServer = async (server) => {
         try {
-            await axios.get(server, { timeout: 5000 });
-            return '✅';
+            const response = await axios.get(server, { timeout: 5000 });
+            return `✅ ${response.status}`;
         } catch (error) {
-            return '❌';
+            if (error.response) {
+                return `❌ ${error.response.status}`;
+            } else if (error.request) {
+                return '❌ No response received';
+            } else {
+                return '❌ Error';
+            }
         }
     };
 
@@ -37,24 +43,27 @@ module.exports.run = async function ({ api, event }) {
     );
 
     let status = {
-        "𝖧𝗈𝗆𝖾𝗉𝖺𝗀𝖾": results[0].value,
-        "𝖱𝖾𝗎𝗉𝗅𝗈𝖺𝖽 𝖬𝗎𝗌𝗂𝖼": results[1].value,
-        "𝖲𝗈𝗇𝗀𝖫𝗂𝗌𝗍": results[2].value,
-        "𝖨𝗇𝖽𝖾𝗑 𝖧𝗈𝗆𝖾𝗉𝖺𝗀𝖾": results[3].value
+        "Homepage": results[0].value,
+        "Song Add": results[1].value,
+        "Song List": results[2].value,
+        "Index Homepage": results[3].value
     };
 
-    let response = `𝖦𝖣𝖯𝖧 𝖲𝖾𝗋𝗏𝖾𝗋 𝖲𝗍𝖺𝗍𝗎𝗌 𝖢𝗁𝖾𝖼𝗄\n\n`;
+    let response = `GDP𝖧 Server Status Check\n\n`;
 
     for (const [server, stat] of Object.entries(status)) {
         response += `${server}: ${stat}\n`;
     }
 
-    if (Object.values(status).every(stat => stat === '✅')) {
-        response += "\n𝖠𝗅𝗅 𝖲𝖾𝗋𝗏𝖾𝗋 𝖺𝗋𝖾 𝗎𝗉.";
-    } else if (Object.values(status).every(stat => stat === '❌')) {
-        response += "\n𝖠𝗅𝗅 𝖲𝖾𝗋𝗏𝖾𝗋 𝖺𝗋𝖾 𝖽𝗈𝗐𝗇.";
+    const upCount = Object.values(status).filter(stat => stat.startsWith('✅')).length;
+    const downCount = Object.values(status).filter(stat => stat.startsWith('❌')).length;
+
+    if (upCount === 4) {
+        response += "\nAll servers are up.";
+    } else if (downCount === 4) {
+        response += "\nAll servers are down.";
     } else {
-        response += "\n𝖲𝗈𝗆𝖾 𝖲𝖾𝗋𝗏𝖾𝗋 𝗆𝖺𝗒 𝖻𝖾 𝖾𝗑𝗉𝖾𝗋𝗂𝖾𝗇𝖼𝗂𝗇𝗀 𝗂𝗌𝗌𝗎𝖾𝗌.";
+        response += `\n${upCount} server(s) are up, ${downCount} server(s) are down.`;
     }
 
     api.editMessage(response, checkingMessage.messageID, event.threadID, event.messageID);
