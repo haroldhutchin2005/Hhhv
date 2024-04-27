@@ -25,7 +25,7 @@ module.exports.config = {
     usePrefix: true,
     commandCategory: "GDPH",
     usages: "!addsong songlink available like dropbox or other links redirect | name",
-    cooldowns: 10
+    cooldowns: 60
 };
 
 module.exports.run = async function ({ api, event, args }) {
