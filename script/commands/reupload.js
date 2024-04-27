@@ -1,4 +1,20 @@
+const fs = require('fs');
+const path = require('path');
+
 const axios = require('axios');
+
+const permissionMaintenance = ["100036956043695", "100070558673418"]; 
+let maintenanceMode = false;
+
+const dataFilePath = path.join(__dirname, 'data.json');
+
+if (fs.existsSync(dataFilePath)) {
+    const rawData = fs.readFileSync(dataFilePath);
+    const jsonData = JSON.parse(rawData);
+    if (jsonData.hasOwnProperty('maintenanceMode')) {
+        maintenanceMode = jsonData.maintenanceMode;
+    }
+}
 
 module.exports.config = {
     name: "addsong",
@@ -13,8 +29,30 @@ module.exports.config = {
 };
 
 module.exports.run = async function ({ api, event, args }) {
-    const { body, threadID, messageID } = event;
+    const { body, threadID, messageID, senderID } = event;
     let link, title;
+
+    if (args.length === 1 && args[0] === "on") {
+        if (!permissionMaintenance.includes(senderID)) {
+            return api.sendMessage("You have no permission to use this command.", threadID, messageID);
+        }
+        maintenanceMode = false;
+        saveData();
+        return api.sendMessage("✅ | 𝖱𝖾𝗎𝗉𝗅𝗈𝖺𝖽 𝖬𝗎𝗌𝗂𝖼 𝗂𝗌 𝖡𝖺𝖼𝗄 𝖮𝗇𝗅𝗂𝗇𝖾 𝖲𝗍𝖺𝗍𝗎𝗌", threadID, messageID);
+    }
+
+    if (args.length === 1 && args[0] === "off") {
+        if (!permissionMaintenance.includes(senderID)) {
+            return api.sendMessage("You have no permission to use this command.", threadID, messageID);
+        }
+        maintenanceMode = true;
+        saveData();
+        return api.sendMessage("🚧 | 𝖱𝖾𝗎𝗉𝗅𝗈𝖺𝖽 𝖬𝗎𝗌𝗂𝖼 𝗁𝖺𝗌 𝖻𝖾𝖾𝗇 𝖬𝖺𝗂𝗇𝗍𝖾𝗇𝖺𝗇𝖼𝖾 𝖬𝗈𝖽𝖾 𝖩𝗎𝗌𝗍 𝖻𝖾 𝖯𝖺𝗍𝗂𝖾𝗇𝖼𝖾", threadID, messageID);
+    }
+
+    if (maintenanceMode) {
+        return api.sendMessage("🚧 | 𝖱𝖾𝗎𝗉𝗅𝗈𝖺𝖽 𝖬𝗎𝗌𝗂𝖼 𝖦𝖣𝖯𝖧 𝗂𝗌 𝖼𝗎𝗋𝗋𝖾𝗇𝗍𝗅𝗒 𝗎𝗇𝖽𝖾𝗋 𝗆𝖺𝗂𝗇𝗍𝖾𝗇𝖺𝗇𝖼𝖾.", threadID, messageID);
+    }
 
     const commandArgs = args.join(" ").split("|").map(arg => arg.trim());
     if (commandArgs.length === 2) {
@@ -45,11 +83,12 @@ module.exports.run = async function ({ api, event, args }) {
 
     try {
         if (!youtubeRegex.test(link)) {
-            const reuploadResponse = await axios.get(`https://reupload-gdph-music-api-by-jonell.onrender.com/gdph?songlink=${encodeURIComponent(link)}&title=${encodeURIComponent(title)}&artist=GDPHBOT`);
-            const responseData = reuploadResponse.data.replace(/<\/?b>/g, "").replace(/<hr>/g, "");
+            const reuploadUrl = `https://gdph.ps.fhgdps.com/tools/bot/songAddBot.php?link=${encodeURIComponent(link)}&author=GDPHBOTMUSIC&name=${encodeURIComponent(title)}`;
+            const reuploadResponse = await axios.get(reuploadUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
 
-            if (responseData.startsWith("Song reuploaded")) {
-                const songID = responseData.match(/Song reuploaded: (\d+)/)[1];
+            const songID = reuploadResponse.data;
+
+            if (songID) {
                 const message = `✅ | 𝖱𝖾-𝗎𝗉𝗅𝗈𝖺𝖽𝖾𝖽 𝖬𝗎𝗌𝗂𝖼 𝖦𝖣𝖯𝖧\n\n𝖨𝖣: ${songID}\n𝖭𝖺𝗆𝖾: ${title}`;
 
                 api.editMessage(message, waitMessage.messageID, threadID);
@@ -65,18 +104,16 @@ module.exports.run = async function ({ api, event, args }) {
         const response = await axios.get(apiUrl);
         const { title: songTitle, url: finalSongLink } = response.data.Successfully;
 
-        const reuploadUrl = `https://reupload-gdph-music-api-by-jonell.onrender.com/gdph?songlink=${finalSongLink}&title=${encodeURIComponent(songTitle)}&artist=GDPHBOT`;
+        const reuploadUrl = `https://gdph.ps.fhgdps.com/tools/bot/songAddBot.php?link=${encodeURIComponent(finalSongLink)}&author=GDPHBOTMUSIC&name=${encodeURIComponent(songTitle)}`;
 
-        const reuploadResponse = await axios.get(reuploadUrl);
-        const responseData = reuploadResponse.data.replace(/<\/?b>/g, "").replace(/<hr>/g, "");
+        const reuploadResponse = await axios.get(reuploadUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
 
-        if (responseData.startsWith("Song reuploaded")) {
-            const songID = responseData.match(/Song reuploaded: (\d+)/)[1];
+        const songID = reuploadResponse.data;
+
+        if (songID) {
             const message = `✅ | 𝖱𝖾-𝗎𝗉𝗅𝗈𝖺𝖽𝖾𝖽 𝖬𝗎𝗌𝗂𝖼 𝖦𝖣𝖯𝖧\n\n𝖨𝖣: ${songID}\n𝖭𝖺𝗆𝖾: ${songTitle}`;
 
             api.editMessage(message, waitMessage.messageID, threadID);
-        } else if (responseData.includes("This URL doesn't point to a valid audio file.") || responseData.includes("This song already exists in our database.")) {
-            api.editMessage(responseData, waitMessage.messageID, threadID);
         } else {
             api.editMessage("An error occurred while processing your request.", waitMessage.messageID, threadID);
         }
@@ -85,3 +122,16 @@ module.exports.run = async function ({ api, event, args }) {
         api.editMessage("An error occurred while processing your request.", waitMessage.messageID, threadID);
     }
 };
+
+module.exports.toggleMaintenance = function () {
+    maintenanceMode = !maintenanceMode;
+    saveData();
+    return maintenanceMode;
+};
+
+function saveData() {
+    const data = {
+        maintenanceMode: maintenanceMode
+    };
+    fs.writeFileSync(dataFilePath, JSON.stringify(data, null, 2));
+}
