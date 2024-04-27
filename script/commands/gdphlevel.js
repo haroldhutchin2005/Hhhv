@@ -24,7 +24,7 @@ module.exports.run = async function ({ api, event, args }) {
         const data = response.data;
 
         const formattedResponse = `[ 𝖦𝖣𝖯𝖧 𝖲𝖾𝗋𝗏𝖾𝗋 𝖫𝖾𝗏𝖾𝗅 𝖨𝗇𝖿𝗈𝗋𝗆𝖺𝗍𝗂𝗈𝗇 ]\n\n
-📝 𝖫𝖾𝗏𝖾𝗅 𝖭𝖺𝗆𝖾: ${data.name}
+📝 𝖫𝖾𝗏𝖾𝗅 𝖭𝖺𝗆𝖾: ${data.name.replace('\\nID', '')}
 🔖 𝖨𝖣: ${data.ID}
 👤 𝖠𝗎𝗍𝗁𝗈𝗋: ${data.Author}
 🎵 𝖲𝗈𝗇𝗀: ${data.Song}
