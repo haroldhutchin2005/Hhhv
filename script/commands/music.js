@@ -77,9 +77,9 @@ module.exports.run = async ({ api, event }) => {
     stream.on('end', () => {
       console.info('[DOWNLOADER] Downloaded');
 
-      if (fs.statSync(filePath).size > 26214400) {
+      if (fs.statSync(filePath).size > 30 * 1024 * 1024) {
         fs.unlinkSync(filePath);
-        return api.sendMessage('[ERR] The file could not be sent because it is larger than 25MB.', event.threadID);
+        return api.sendMessage('[ERR] The file could not be sent because it is larger than 30MB.', event.threadID);
       }
 
       api.unsendMessage(findingMessage.messageID);
