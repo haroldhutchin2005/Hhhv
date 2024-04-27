@@ -7,7 +7,7 @@ module.exports.config = {
   commandCategory: "utility",
   usages: "[title]",
   usePrefix: true,
-  cooldowns: 60,
+  cooldowns: 40,
   dependencies: {
     "fs-extra": "",
     "request": "",
