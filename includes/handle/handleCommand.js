@@ -57,7 +57,7 @@ module.exports = function({ api, models, Users, Threads, Currencies }) {
         if (checker.bestMatch.rating >= 0.5) {
           command = commands.get(checker.bestMatch.target); 
         } else {
-          return api.sendMessage(`𝖢𝗈𝗆𝗆𝖺𝗇𝖽 𝖭𝗈𝗍 𝖥𝗈𝗎𝗇𝖽? 𝖳𝗒𝗉𝖾 ${global.config.PREFIX}𝗁𝖾𝗅𝗉 𝗍𝗈 𝗌𝖾𝖾 𝖺𝗅𝗅 𝖼𝗈𝗆𝗆𝖺𝗇𝖽𝗌\n\n𝖣𝖺𝗍𝖾:\n${time}`, threadID, messageID); 
+          return api.sendMessage(`The command you type is not found\n${global.config.PREFIX}help\n\nDate:\n${time}`, threadID, messageID); 
         }
       }
     }
@@ -149,7 +149,7 @@ if (!command) {
       if (now < expiration) {
         const remainingTime = (expiration - now) / 1000;
 
-api.setMessageReaction("⏱️", event.messageID, () => {}, true);
+api.sendMessage(`⏱️ | The command has been cooldowns just wait in ${remainingTime.toFixed(0)} to reuse the command again.`, event.threadID, event.messageID);
         setTimeout(() => {
           api.unsendMessage(cooldownMessage.messageID);
         }, 60000);
