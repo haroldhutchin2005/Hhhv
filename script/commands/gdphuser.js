@@ -23,7 +23,7 @@ module.exports.run = async function ({ api, event, args }) {
         const response = await axios.get(`https://geometry-dash-fs-secondary-api-by-jonell.onrender.com/api/player?user=${username}`);
         const data = response.data;
 
-        const formattedResponse = `[ 𝖦𝖯𝖣𝖧 𝖲𝖾𝗋𝗏𝖾𝗋 𝖯𝗅𝖺𝗒𝖾𝗋 𝖲𝗍𝖺𝗍𝗌 ]\n
+        const formattedResponse = `[ 𝖦𝖣𝖯𝖧 𝖲𝖾𝗋𝗏𝖾𝗋 𝖯𝗅𝖺𝗒𝖾𝗋 𝖲𝗍𝖺𝗍𝗌 ]\n
 𝖭𝖺𝗆𝖾: ${data.Name}
 𝖴𝗌𝖾𝗋 𝖨𝖣: ${data["User ID"]}
 𝖠𝖼𝖼𝗈𝗎𝗇𝗍 𝖨𝖣: ${data["Account ID"]}
