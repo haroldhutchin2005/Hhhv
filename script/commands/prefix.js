@@ -6,6 +6,7 @@ module.exports.config = {
   credits: "John Arida", 
   description: "no prefix",
   usePrefix: true,
+  hide: true,
   commandCategory: "No command marks needed",
   usages: "...",
     cooldowns: 1, 
