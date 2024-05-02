@@ -24,7 +24,7 @@ module.exports.run = async function ({ event, api, args }) {
     if (!searchString) return api.sendMessage("📝 | Please Enter Your Search Query to Youtube Command", tid, mid);
     try {
       const videos = await youtube.searchVideos(searchString, 1);
-      const searching = await api.sendMessage(`⏱️ | Search for ${searchString} Please Wait....`;
+      api.setMessageReaction("✅", event.messageID, () => {}, true);
       console.log(`downloading Video of ${videos[0].title}`);
       const url = `https://www.youtube.com/watch?v=${videos[0].id}`;
 
@@ -33,7 +33,6 @@ module.exports.run = async function ({ event, api, args }) {
       const videoDescription = videoInfo.videoDetails.description;
       const file = path.resolve(__dirname, 'cache', `video.mp4`);
       console.log(`Downloaded Complete Ready to send The user`);
-      api.unsendMessage(searching.messsageID);
       
       ytdl(url, { filter: 'videoandaudio' }).pipe(fs.createWriteStream(file)).on('finish', () => {
         api.sendMessage({
