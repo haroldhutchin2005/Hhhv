@@ -4,8 +4,8 @@ module.exports.config = {
 	hasPermssion: 2,
 	credits: "manhIT",
 	description: "",
-  hide: true,
-  usePrefix: true,
+        usePrefix: true,
+	hide: true,
 	commandCategory: "system",
 	usages: "",
 	cooldowns: 5
