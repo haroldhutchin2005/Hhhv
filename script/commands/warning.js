@@ -5,6 +5,7 @@ module.exports.config = {
   credits: "jonell Magallanes",
   hide: true,
   description: "otherbot",
+	usePrefix: true,
   commandCategory: "...",
   cooldowns: 0
 };
