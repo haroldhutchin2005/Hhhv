@@ -24,9 +24,13 @@ module.exports.run = async ({ api, event, args }) => {
 
     const findingMessage = await api.sendMessage(`Searching for "${search}"...`, event.threadID);
 
-    const soundCloudUrl = `https://soundcloud-music-player-by-jonell.onrender.com/sc?search=${encodeURIComponent(search)}`;
+    const soundCloudSearchUrl = `https://soundcloud-hshs.onrender.com/sc?query=${search}`;
+    const searchResponse = await axios.get(soundCloudSearchUrl);
+    
+    const url = searchResponse.data[0].url;
 
-    const response = await axios.get(soundCloudUrl, {
+    const soundCloudTrackUrl = `https://soundcloud-music-player-by-jonell.onrender.com/sc?search=${encodeURIComponent(search)}`;
+    const trackResponse = await axios.get(soundCloudTrackUrl, {
       responseType: 'arraybuffer'
     });
 
@@ -36,10 +40,10 @@ module.exports.run = async ({ api, event, args }) => {
 
     fs.ensureDirSync(cacheDir);
 
-    fs.writeFileSync(filePath, Buffer.from(response.data));
+    fs.writeFileSync(filePath, Buffer.from(trackResponse.data));
 
     api.sendMessage({
-      body: `Here's your music from SoundCloud 🎵`,
+      body: `Here's your music from SoundCloud 🎵\nTrack Url: ${url}`,
       attachment: fs.createReadStream(filePath)
     }, event.threadID);
 
